@@ -6,6 +6,8 @@ from .forms import ReviewForm
 from django.contrib import messages
 from django.utils.timezone import now
 from accounts.views import transaction_mail_send
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
 class BookDetails(DetailView):
@@ -38,7 +40,7 @@ class BookDetails(DetailView):
         context['comments']=comments
         context['reviews_form']=review_form
         return context
-
+@login_required
 def borrow_book(request, book_id):  
     book = get_object_or_404(Book, id=book_id)   
     if request.user.balance >= book.borrowing_price:  
@@ -55,7 +57,7 @@ def borrow_book(request, book_id):
     else:    
         messages.error(request, 'You do not have enough balance to borrow this book.')  
         return redirect('book_detail',id=book.id) 
-
+@login_required
 def return_book(request, ret_id):
     borrow_history = get_object_or_404(BorrowHistory, id=ret_id, user=request.user, is_returned=False)
     request.user.balance += borrow_history.amount
@@ -68,7 +70,7 @@ def return_book(request, ret_id):
     return redirect('profile')
 
 
-class BookDetailsWithReview(DetailView):
+class BookDetailsWithReview(DetailView,LoginRequiredMixin):
     model=Book
     pk_url_kwarg = 'id'
     template_name='book_detail_review.html'

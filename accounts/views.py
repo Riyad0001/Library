@@ -9,6 +9,7 @@ from .forms import DepositeMoneiForm
 from book.models import BorrowHistory
 from django.core.mail import EmailMessage,EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 def transaction_mail_send(user,subject,amount,template):
     message=render_to_string(template,{'user':user,'amount':amount})
     send_mail=EmailMultiAlternatives(subject,'',to=[user.email])
@@ -20,7 +21,7 @@ class SignUpView(CreateView):
   success_url = reverse_lazy('login')
   form_class = UserRegisterForm
   success_message = "Your profile was created successfully"
-
+@login_required
 def deposit_money(request):
     if request.method == 'POST':
         form = DepositeMoneiForm(request.POST)
@@ -34,7 +35,7 @@ def deposit_money(request):
     else:
         form = DepositeMoneiForm()
     return render(request, 'deposit_money.html', {'form': form})
-
+@login_required
 def user_profile(request):
     borrowing_history = BorrowHistory.objects.filter(user=request.user).order_by('-borrow_date')
 
