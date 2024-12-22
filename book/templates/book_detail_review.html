@@ -1,0 +1,67 @@
+{% extends "base.html" %} {% load crispy_forms_tags %} {% block content %}
+
+<div class="container my-5">
+  <!-- Book Details Section -->
+  <div class="row mb-5">
+    <div class="col-lg-6 col-md-12 text-center">
+      <img
+        src="{{ object.image.url }}"
+        alt="Book Image"
+        class="img-fluid rounded shadow"
+        style="max-height: 400px; object-fit: cover"
+      />
+    </div>
+    <div class="col-lg-6 col-md-12">
+      <h1 class="fw-bold text-dark">{{ object.title }}</h1>
+      <h3 class="text-success mb-4">
+        Borrowing Price: ${{ object.borrowing_price }}
+      </h3>
+      <p class="text-muted">{{ object.description }}</p>
+      <p>
+        <strong>Category:</strong>
+        {% for cat in object.category.all %}
+        <span class="badge bg-warning text-dark me-1">{{ cat.name }}</span>
+        {% endfor %}
+      </p>
+      <form method="post" action="{% url 'borrow_book' object.id %}">
+        {% csrf_token %}
+        <button class="btn btn-primary btn-lg mt-3">Borrow Book</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <div class="card bg-light shadow-sm mb-5">
+    <div class="card-body">
+      <h4 class="text-primary mb-3">Total Reviews: {{ comments|length }}</h4>
+      {% if comments %} {% for comment in comments %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h6 class="card-title">
+            <span class="fw-bold text-primary">{{ comment.name }}</span>
+            <small class="text-muted">• {{ comment.created_on }}</small>
+          </h6>
+          <p class="text-secondary">{{ comment.body }}</p>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <p class="text-muted">
+        No reviews yet. Be the first to review this book!
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Add Review Form -->
+  <div class="card bg-light shadow-sm">
+    <div class="card-body">
+      <h2 class="text-primary mb-4">Add Review</h2>
+      <form method="post">
+        {% csrf_token %} {{ reviews_form|crispy }}
+        <button class="btn btn-warning btn-lg">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

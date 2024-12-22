@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block content %} {% load crispy_forms_tags %}
+<div class="container my-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="text-center text-primary mb-4">Deposit Funds</h2>
+      <form method="POST" class="needs-validation" novalidate>
+        {% csrf_token %} {{ form|crispy }}
+        <div class="text-center">
+          <button type="submit" class="btn btn-success btn-lg mt-3">
+            Deposit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

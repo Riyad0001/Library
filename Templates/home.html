@@ -1,0 +1,100 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<div class="container-fluid bg-light p-5">
+  <!-- Welcome Section -->
+  <div class="row align-items-center">
+    <div class="col-lg-6 col-md-12 text-center text-lg-start">
+      <h1 class="display-4 fw-bold">Welcome to Nineteen Nine Library</h1>
+      <p class="lead text-muted">
+        Discover a world of knowledge, entertainment, and inspiration. Explore
+        our collection and find your next favorite book.
+      </p>
+    </div>
+    <div class="col-lg-6 col-md-12 text-center">
+      <img
+        src="{% static 'l1.jpg' %}"
+        class="img-fluid rounded shadow"
+        alt="Library Image"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- Explore Books Section -->
+<div class="container my-5">
+  <h2 class="text-center mb-4">Explore Books</h2>
+  <div class="row">
+    <!-- Sidebar for Categories -->
+    <div class="col-lg-3 col-md-4 mb-4">
+      <div class="p-4 bg-white shadow-sm rounded">
+        <h5 class="fw-bold mb-3">Categories</h5>
+        {% for cate in catagory %}
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="catagory"
+            id="{{ cate.id }}"
+          />
+          <label class="form-check-label" for="{{ cate.id }}">
+            <a
+              href="{% url 'catagory_wise_post' cate.slug %}"
+              class="text-decoration-none text-dark"
+              >{{ cate.name }}</a
+            >
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Books Section -->
+    <div class="col-lg-9 col-md-8">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-primary">
+          {{ data | length }} Result{% if data|length != 1 %}s{% endif %} Found
+        </h3>
+      </div>
+      <div class="row g-4">
+        {% for items in data %}
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-body p-4">
+              {% if items.image %}
+              <img
+                src="{{ items.image.url }}"
+                class="card-img-top rounded mb-3"
+                style="height: 200px; object-fit: cover"
+                alt="Book Image"
+              />
+              {% else %}
+              <img
+                src="{% static 'images/placeholder.jpg' %}"
+                class="card-img-top rounded mb-3"
+                style="height: 200px; object-fit: cover"
+                alt="No image available"
+              />
+              {% endif %}
+              <h5 class="card-title text-dark">{{ items.title }}</h5>
+              <h6 class="text-muted">Price: ${{ items.borrowing_price }}</h6>
+              <p class="text-truncate">{{ items.description }}</p>
+              <p class="mb-2">
+                <strong>Category:</strong>
+                {% for cat in items.category.all %}
+                <span class="badge bg-primary">{{ cat.name }}</span>
+                {% endfor %}
+              </p>
+              <a
+                href="{% url 'book_detail' items.id %}"
+                class="btn btn-outline-primary w-100"
+              >
+                View Details
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
